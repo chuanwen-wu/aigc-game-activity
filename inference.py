@@ -6,8 +6,8 @@ from PIL import Image
 import asyncio
 
 # A1111 URL
-# url = "http://127.0.0.1:7860"
-endpoint = "http://3.113.68.185:8081"
+endpoint = "http://127.0.0.1:8080"
+# endpoint = "http://3.113.68.185:8081"
 
 # Read Image in RGB order
 # img = cv2.imread("sources/birme-512x512/dog-1.jpeg")
