@@ -4,9 +4,12 @@ import interactions
 import traceback
 import inference
 from interactions.models import *
+import os
+
+DISCORD_GUILD_ID = os.getenv('DISCORD_GUILD_ID')
 
 class Img2imgCommands(Extension):
-    @slash_command(name="img2img", description="图生图", scopes=[1134099955469013102])
+    @slash_command(name="img2img", description="图生图", scopes=[DISCORD_GUILD_ID])
     @slash_option(name="image", description="Your Image", required=True, opt_type=OptionType.ATTACHMENT)
     @slash_option(name="prompt", description="Your Prompt", required=False, opt_type=OptionType.STRING)
     async def command(self, ctx: SlashContext, image: Attachment, prompt: str=""):

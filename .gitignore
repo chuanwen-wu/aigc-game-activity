@@ -1,11 +1,12 @@
 sync_to_server.sh
 tmp
 .DS_Store
+.terraform
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
 # C extensions
 *.so
 

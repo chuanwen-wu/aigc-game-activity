@@ -3,3 +3,5 @@ sagemaker==2.140.0
 discord-py-interactions==5.8.0
 requests
 pillow
+# only for testing
+# opencv-python

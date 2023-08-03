@@ -6,8 +6,9 @@ from PIL import Image
 import asyncio
 
 # A1111 URL
-endpoint = "http://127.0.0.1:8080"
+# endpoint = "http://127.0.0.1:8080"
 # endpoint = "http://3.113.68.185:8081"
+endpoint = "http://k8s-default-mysd-c832f10821-315108241.ap-northeast-1.elb.amazonaws.com"
 
 # Read Image in RGB order
 # img = cv2.imread("sources/birme-512x512/dog-1.jpeg")
@@ -85,7 +86,14 @@ async def img2img(input_url: str, input_prompt: str =None):
             }
         }
     }
-
+    override_settings = {}
+    override_settings["sd_model_checkpoint"] = 'rpg_V4.safetensors [e04b020012]'
+    override_payload = {
+        "override_settings": override_settings
+    }
+    payload.update(override_payload)
+    print(payload)
+    
     # Trigger Generation
     response = requests.post(url=f'{endpoint}/sdapi/v1/img2img', json=payload)
     # todo，判断结果
