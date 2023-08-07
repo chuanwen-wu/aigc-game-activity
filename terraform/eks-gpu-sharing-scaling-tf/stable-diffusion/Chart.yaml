@@ -1,0 +1,7 @@
+apiVersion: v2
+appVersion: 1.4.0
+description: Packaged Stable Diffusion with a companion UI and automatic model retrieval
+  - https://github.com/victorgu-github/eks-gpu-sharing-scaling-tf
+name: stable-diffusion
+type: application
+version: 1.0.0

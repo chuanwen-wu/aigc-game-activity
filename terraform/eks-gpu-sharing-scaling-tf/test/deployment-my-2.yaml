@@ -1,0 +1,69 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: gpu2
+  labels:
+    app: gpu2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gpu2
+  template:
+    metadata:
+      labels:
+        app: gpu2
+    spec:
+      nodeSelector:
+        eks/node-type: gpu
+        karpenter.sh/provisioner-name: gpu
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+      serviceAccountName: iam-s3-readonly
+      containers:
+      - name: my-sd-container
+        image: public.ecr.aws/r7r9s7c1/sd-game-activity:0.21
+        # image: tensorflow/tensorflow:latest-gpu
+        imagePullPolicy: IfNotPresent
+        # command: ["/bin/sh", "-ec", "while :; do echo '.'; sleep 5 ; done"]
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sd-svc2
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: gpu2
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  # namespace: stable-diffusion
+  name: my-sd2
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: alb
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: sd-svc2
+            port:
+              number: 80

@@ -1,0 +1,31 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: test-gpu
+  labels:
+    app: gpu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gpu
+  template:
+    metadata:
+      labels:
+        app: gpu
+    spec:
+      nodeSelector:
+        eks/node-type: gpu
+        karpenter.sh/provisioner-name: gpu
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - name: gpu-container
+        image: tensorflow/tensorflow:latest-gpu
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-ec", "while :; do echo '.'; sleep 5 ; done"]
+        resources:
+          limits:
+            nvidia.com/gpu: 2

@@ -28,7 +28,7 @@ do_one_inference()
 # 每批任务执行时间间隔，/秒
 timeInterval=0
 # 总共任务批数
-batchCount=30
+batchCount=3
 # 每批任务的请求数
 batchSize=1
 

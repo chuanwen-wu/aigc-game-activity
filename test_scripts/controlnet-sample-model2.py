@@ -8,12 +8,10 @@ from PIL import Image
 
 # A1111 URL
 # url = "http://127.0.0.1:7860"
-url = "http://k8s-default-mysd-c832f10821-315108241.ap-northeast-1.elb.amazonaws.com"
-# url = "http://3.113.68.185:8080"
+url = "http://k8s-default-mysd2-7bf5bfd8ad-24377272.ap-northeast-1.elb.amazonaws.com"
 
 # Read Image in RGB order
-img = cv2.imread("assets/dog-1.jpeg")
-# img = cv2.imread("sources/birme-512x512/woman-1.jpeg")
+img = cv2.imread("assets/icon.png")
 
 # Encode into PNG and send to ControlNet
 retval, bytes = cv2.imencode('.png', img)
@@ -65,7 +63,7 @@ payload = {
     }
 }
 override_settings = {}
-override_settings["sd_model_checkpoint"] = 'rpg_V4.safetensors [e04b020012]'
+override_settings["sd_model_checkpoint"] = 'chilloutmix_NiPrunedFp32Fix.safetensors [fc2511737a]'
 override_payload = {
     "override_settings": override_settings
 }
