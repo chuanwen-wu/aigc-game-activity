@@ -2,6 +2,9 @@ sync_to_server.sh
 tmp
 .DS_Store
 .terraform
+.tfstate
+.bak
+.backup
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

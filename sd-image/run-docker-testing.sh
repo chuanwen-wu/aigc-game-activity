@@ -1,13 +1,22 @@
 #!/bin/bash
 
-inference_image=sd-game-activty
-datadir=/home/ubuntu/stable-diffusion-webui/models
+# inference_image=sd-game-activity:latest
+inference_image=sd-game-activity:0.23-committed
+datadir=/home/ubuntu/datadir/models
 docker run --runtime=nvidia --gpus all --rm \
     -p 8080:8080 \
-    -v ${datadir}/Stable-diffusion:/app/stable-diffusion-webui/models/Stable-diffusion \
-    -v ${datadir}/Lora:/app/stable-diffusion-webui/models/Lora \
-    -v ${datadir}/ControlNet:/app/stable-diffusion-webui/models/ControlNet \
-    ${inference_image}:latest 
+    -v ${datadir}:/app/datadir \
+    -e ckpt_dir=/app/datadir/Stable-diffusion \
+    -e lora_dir=/app/datadir/Lora \
+    -e controlnet_dir=/app/datadir/ControlNet \
+    ${inference_image}
+
+# docker run --runtime=nvidia --gpus all --rm \
+#     -p 8080:8080 \
+#     -v ${datadir}/Stable-diffusion:/app/stable-diffusion-webui/models/Stable-diffusion \
+#     -v ${datadir}/Lora:/app/stable-diffusion-webui/models/Lora \
+#     -v ${datadir}/ControlNet:/app/stable-diffusion-webui/models/ControlNet \
+#     ${inference_image}
 
 # docker run --gpus all --rm \
 #     -p 8081:8080 \

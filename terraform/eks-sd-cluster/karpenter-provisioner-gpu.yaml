@@ -1,0 +1,73 @@
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: gpu-bottlerocket
+spec:
+  requirements:
+    - key: node.kubernetes.io/instance-type
+      operator: In
+      values: ["g5.2xlarge"]
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values: ["spot", "on-demand"]
+    - key: kubernetes.io/arch
+      operator: In
+      values: ["amd64"]
+  taints:
+    - key: nvidia.com/gpu
+      effect: "NoSchedule"
+  limits:
+    resources:
+      cpu: 1000
+  providerRef:
+    name: node-gpu
+  ttlSecondsAfterEmpty: 30
+  labels:
+      eks/node-type: gpu
+      eks/gpu-type: nvidia
+      nvidia.com/gpu.present: "true"
+---
+apiVersion: karpenter.k8s.aws/v1alpha1
+kind: AWSNodeTemplate
+metadata:
+  name: node-gpu
+spec:
+  tags:
+    "eks/node-type": "gpu"
+    "auto-delete": "no"
+  subnetSelector:
+    karpenter.sh/discovery: eks-tester
+  securityGroupSelector:
+    karpenter.sh/discovery: eks-tester
+  amiFamily: Bottlerocket
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 10Gi
+        volumeType: gp3
+    - deviceName: /dev/xvdb
+      ebs:
+        volumeSize: 100Gi
+        volumeType: gp3
+        snapshotID: snap-083d84898f39f9430
+        # iops: 4000
+        throughput: 500
+# ---
+# apiVersion: karpenter.k8s.aws/v1alpha1
+# kind: AWSNodeTemplate
+# metadata:
+#   name: node-gpu
+# spec:
+#   tags:
+#     "eks/node-type": "gpu"
+#     "auto-delete": "no"
+#   subnetSelector:
+#     karpenter.sh/discovery: eks-tester
+#   securityGroupSelector:
+#     karpenter.sh/discovery: eks-tester
+#   blockDeviceMappings:
+#     - deviceName: /dev/xvda
+#       ebs:
+#         volumeType: gp3
+#         volumeSize: 50Gi
+#         deleteOnTermination: true
