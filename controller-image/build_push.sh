@@ -3,6 +3,7 @@ AWS_REGION='ap-northeast-1'
 cluster_name='eks-game-gai'
 image_name=controller-sd
 sa_name=img2img-sa
+
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 aws ecr create-repository --repository-name ${image_name}
 image_url=${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${image_name}:latest
