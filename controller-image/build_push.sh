@@ -1,8 +1,10 @@
 #Build the sd controller image
 AWS_REGION='ap-northeast-1'
 cluster_name='eks-game-gai'
+AWSContainerSQSQueueExecutionPolicy="arn:aws:iam::733851053666:policy/AWSContainerSQSQueueExecutionPolicy-discord-sd-gai"
+
 image_name=controller-sd
-sa_name=img2img-sa
+sa_name=sqsexec-sa
 
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 aws ecr create-repository --repository-name ${image_name}
@@ -15,6 +17,7 @@ docker push ${image_url}
 #给deployment加iam role的权限。
 eksctl create iamserviceaccount --cluster=${cluster_name} --region=${AWS_REGION} --name=${sa_name} --attach-policy-arn=arn:aws:iam::${ACCOUNT_ID}:policy/AWSContainerSQSQueueExecutionPolicy-discord-sd --approve 
 
-echo "image_url = ${image_url}"
+echo "Outputs:"
+echo "controller_sd_image_url = ${image_url}"
 echo "service_account = ${sa_name}"
  
