@@ -7,7 +7,6 @@ import asyncio
 
 # A1111 URL
 endpoint = "http://k8s-stabledi-stabledi-c13209743c-1747026568.us-west-2.elb.amazonaws.com"
-# endpoint = "http://3.113.68.185:8081"
 
 # Read Image in RGB order
 # img = cv2.imread("sources/birme-512x512/dog-1.jpeg")
