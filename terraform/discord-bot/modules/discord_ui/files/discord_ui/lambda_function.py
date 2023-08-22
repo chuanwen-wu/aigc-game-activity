@@ -4,6 +4,7 @@ import boto3
 import json
 
 APPLICATION_ID = os.environ.get("APPLICATION_ID")
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 ssm = boto3.client('ssm')
 
 def deleteCommand(command_id, application_id, headers):
@@ -43,7 +44,9 @@ def validateRequest(r):
 
 def lambda_handler(event, context):
 
-    DISCORD_TOKEN = ssm.get_parameter(Name='/BOT_TOKEN', WithDecryption=True)['Parameter']['Value']
+    # DISCORD_TOKEN = ssm.get_parameter(Name='/BOT_TOKEN', WithDecryption=True)['Parameter']['Value']
+    DISCORD_TOKEN = BOT_TOKEN
+    print(DISCORD_TOKEN)
     # For authorization, you can use either your bot token
     headers = {
         "Authorization": f"Bot {DISCORD_TOKEN}"

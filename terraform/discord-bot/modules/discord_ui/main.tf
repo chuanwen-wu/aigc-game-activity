@@ -16,6 +16,7 @@ resource "aws_lambda_function" "discord_ui" {
   environment {
     variables = {
       APPLICATION_ID = var.discord_application_id
+      BOT_TOKEN = var.discord_bot_secret
     }
   }
   depends_on = [
@@ -25,12 +26,12 @@ resource "aws_lambda_function" "discord_ui" {
   ]
 }
 
-resource "aws_ssm_parameter" "secret" {
-  name        = "BOT_TOKEN"
-  description = "Discord Bot Secret"
-  type        = "SecureString"
-  value       = var.discord_bot_secret
-}
+# resource "aws_ssm_parameter" "secret" {
+#   name        = "BOT_TOKEN"
+#   description = "Discord Bot Secret"
+#   type        = "SecureString"
+#   value       = var.discord_bot_secret
+# }
 
 data "archive_file" "discord_ui" {
   type        = "zip"
