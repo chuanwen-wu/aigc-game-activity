@@ -60,7 +60,6 @@ module "eks_blueprints_addons" {
 
   # We want to wait for the Fargate profiles to be deployed first
   create_delay_dependencies = [for prof in module.eks.fargate_profiles : prof.fargate_profile_arn]
-
       eks_addons = {
         aws-ebs-csi-driver = {
             service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
@@ -154,34 +153,27 @@ resource "kubectl_manifest" "karpenter_node_template" {
         karpenter.sh/discovery: ${module.eks.cluster_name}
   YAML
 }
-# Example deployment using the [pause image](https://www.ianlewis.org/en/almighty-pause-container)
-# and starts with zero replicas
-# resource "kubectl_manifest" "karpenter_example_deployment" {
-#   yaml_body = <<-YAML
-#     apiVersion: apps/v1
-#     kind: Deployment
-#     metadata:
-#       name: inflate
-#     spec:
-#       replicas: 5
-#       selector:
-#         matchLabels:
-#           app: inflate
-#       template:
-#         metadata:
-#           labels:
-#             app: inflate
-#         spec:
-#           terminationGracePeriodSeconds: 0
-#           containers:
-#             - name: inflate
-#               image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
-#               resources:
-#                 requests:
-#                   cpu: 1
-#   YAML
 
-#   depends_on = [
-#     kubectl_manifest.karpenter_node_template
-#   ]
-# }
+#---------------------------------------------------------------
+# Allow karpenter controller to run bottlerocket snapshot instance.
+# Additional IAM policies for a IAM role for service accounts
+#---------------------------------------------------------------
+data "aws_iam_policy_document" "karpenter-snapshot-policy" {
+  statement {
+    effect    = "Allow"
+    actions   = ["ec2:RunInstances"]
+    resources = ["arn:aws:ec2:${local.region}::snapshot/*"]
+  }
+}
+
+resource "aws_iam_policy" "karpenter-snapshot-policy" {
+  name        = "karpenter-snapshot-policy"
+  description = "Allow karpenter controller to run bottlerocket snapshot instance."
+  policy      = data.aws_iam_policy_document.karpenter-snapshot-policy.json
+}
+
+#need to change the default IRSA role name. - give up the automation, use manaully to bind the policy.
+resource "aws_iam_role_policy_attachment" "karpenter-bottlerocket-attach" {
+  role       = module.eks_blueprints_addons.karpenter.iam_role_name
+  policy_arn = aws_iam_policy.karpenter-snapshot-policy.arn
+}
