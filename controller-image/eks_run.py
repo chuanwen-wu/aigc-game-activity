@@ -1,6 +1,5 @@
 import os
 import io
-import os
 import base64
 import requests
 from PIL import Image
@@ -16,9 +15,6 @@ import random
 REGION = os.environ['REGION']
 QUEUE_URL = os.environ['SQSQUEUEURL']
 endpoint = os.environ['ENDPOINT']
-#REGION = "us-west-2"
-#QUEUE_URL = "https://sqs.us-west-2.amazonaws.com/970662323538/discord-diffusion-prod.fifo"
-#endpoint = "http://k8s-stabledi-stabledi-c13209743c-1747026568.us-west-2.elb.amazonaws.com"
 
 ssm = boto3.client('ssm', region_name=REGION)
 #USER_HG =  ssm.get_parameter(Name='/USER_HG')['Parameter']['Value']
