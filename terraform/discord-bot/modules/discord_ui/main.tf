@@ -81,7 +81,7 @@ resource "aws_iam_policy" "lambda_read_sec_param" {
         ],
         "Resource" : [
           "arn:aws:kms:*:${var.account_id}:alias/aws/ssm",
-          "${aws_ssm_parameter.secret.arn}"
+          # "${aws_ssm_parameter.secret.arn}"
         ]
       }
     ]
