@@ -29,12 +29,13 @@ if [[ ! "" == $controlnet_dir ]]; then
     appendArgs="${appendArgs} --controlnet-dir=${controlnet_dir}"
 fi
 
+echo "auto_exit=$auto_exit"
+if [[ $auto_exit ]]; then
+    appendArgs="${appendArgs} --exit"
+fi
 # echo appendArgs=${appendArgs}
 
 # init
 cd stable-diffusion-webui/
-# echo $(date) "starting webui.sh ..."
-echo "$(date) -- ACCELERATE=true bash ./webui.sh -f --api --listen --port 8080 --xformers --enable-console-prompts --api-log --skip-version-check ${appendArgs}"
-ACCELERATE=true bash ./webui.sh -f --api --listen --port 8080 --xformers --enable-console-prompts --api-log --skip-version-check ${appendArgs}
-
-# ACCELERATE=true bash ./webui.sh -f --api --listen --port 8080 --xformers --enable-console-prompts --api-log --skip-version-check $appendArgs
+echo "$(date) -- ACCELERATE=true bash ./webui.sh -f --api --listen --port 8080 --xformers --enable-console-prompts --api-log --skip-version-check --skip-torch-cuda-test --no-download-sd-model ${appendArgs}"
+ACCELERATE=true bash ./webui.sh -f --api --listen --port 8080 --xformers --enable-console-prompts --api-log --skip-version-check --skip-torch-cuda-test --no-download-sd-model ${appendArgs}

@@ -4,7 +4,7 @@ metadata:
   name: controller-sd
   # namespace: stable-diffusion
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: controller-sd
