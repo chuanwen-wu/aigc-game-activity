@@ -35,9 +35,9 @@ spec:
     "eks/node-type": "cpu"
     "auto-delete": "no"
   subnetSelector:
-    karpenter.sh/discovery: eks-tester
+    karpenter.sh/discovery: eks-game-gai
   securityGroupSelector:
-    karpenter.sh/discovery: eks-tester
+    karpenter.sh/discovery: eks-game-gai
   # subnetSelector:
   #   kubernetes.io/role/elb: "1"
   # securityGroupSelector:

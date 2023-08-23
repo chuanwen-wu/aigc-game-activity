@@ -1,9 +1,11 @@
+#!/usr/bin/env python -u
+
 import os
 import io
 import base64
 import requests
 from PIL import Image
-import logging
+# import logging
 import inference
 
 # Cloud Requirements
@@ -11,10 +13,13 @@ import boto3
 import json
 import requests
 import random
-
+print("Start...")
 REGION = os.environ['REGION']
 QUEUE_URL = os.environ['SQSQUEUEURL']
 endpoint = os.environ['ENDPOINT']
+print("REGION{}".format(REGION))
+print("QUEUE_URL{}".format(QUEUE_URL))
+print("endpoint{}".format(endpoint))
 
 ssm = boto3.client('ssm', region_name=REGION)
 #USER_HG =  ssm.get_parameter(Name='/USER_HG')['Parameter']['Value']

@@ -11,4 +11,4 @@ RUN python -m pip install -U boto3
 COPY eks_run.py /app/
 COPY inference.py /app/
 
-ENTRYPOINT ["python", "eks_run.py"]
+ENTRYPOINT ["python", "-u", "eks_run.py"]

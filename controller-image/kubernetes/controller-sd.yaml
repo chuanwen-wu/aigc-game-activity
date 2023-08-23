@@ -4,7 +4,7 @@ metadata:
   name: controller-sd
   # namespace: stable-diffusion
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: controller-sd
@@ -24,10 +24,11 @@ spec:
       terminationGracePeriodSeconds: 0
       containers:
         - name: controller-sd
-          image: 733851053666.dkr.ecr.ap-northeast-1.amazonaws.com/controller-sd:latest
+          image: 733851053666.dkr.ecr.ap-northeast-1.amazonaws.com/controller-sd:0.1
+          # image: 733851053666.dkr.ecr.ap-northeast-1.amazonaws.com/aigc-service-image:latest
           resources:
             requests:
-              cpu: 0.1
+              cpu: 1
           env:
           - name: SQSQUEUEURL 
             value: "https://sqs.ap-northeast-1.amazonaws.com/733851053666/discord-sd-gai-prod.fifo"

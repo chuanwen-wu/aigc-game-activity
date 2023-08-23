@@ -36,9 +36,9 @@ spec:
     "eks/node-type": "gpu"
     "auto-delete": "no"
   subnetSelector:
-    karpenter.sh/discovery: eks-tester
+    karpenter.sh/discovery: eks-game-gai
   securityGroupSelector:
-    karpenter.sh/discovery: eks-tester
+    karpenter.sh/discovery: eks-game-gai
   amiFamily: Bottlerocket
   blockDeviceMappings:
     - deviceName: /dev/xvda
@@ -49,8 +49,7 @@ spec:
       ebs:
         volumeSize: 100Gi
         volumeType: gp3
-        snapshotID: snap-083d84898f39f9430
-        # iops: 4000
+        snapshotID: snap-015f7f04b51dece9d
         throughput: 500
 # ---
 # apiVersion: karpenter.k8s.aws/v1alpha1
