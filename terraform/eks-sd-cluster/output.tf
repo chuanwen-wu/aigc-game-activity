@@ -13,3 +13,8 @@ output "vpc_id" {
   description = "ID of the VPC"
   value       = module.vpc.vpc_id
 }
+
+output "public_subnet_id_list" {
+  description = "public_subnet_id_list"
+  value       = module.vpc.public_subnets
+}

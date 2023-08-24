@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: efs-load-model
+  #namespace: stable-diffusion
+spec:
+  containers:
+  - name: nginx
+    image: busybox:1.35
+    command: ['sh', '-c', "model_md5sum=$(md5sum /app/stable-diffusion-webui/models/Stable-diffusion/rpg-v4.safetensors|awk '{print $1}' );if [ $model_md5sum == '2f8e25d8f763fb505441e30a5e89480f' ]; then echo 1.model rpg-v4.safetensors already exists; else wget -nc https://huggingface.co/Anashel/rpg/resolve/main/RPG-V4-Model-Download/RPG-v4.safetensors -O /app/stable-diffusion-webui/models/Stable-diffusion/rpg-v4.safetensors; fi; model_md5sum=$(md5sum /app/stable-diffusion-webui/models/ControlNet/control_v11p_sd15_canny.pth|awk '{print $1}' );if [ $model_md5sum == '80f778c46e8e3380dcbddada79069356' ]; then echo 2.model control_v11p_sd15_canny.pth already exists; else wget -nc https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth -O /app/stable-diffusion-webui/models/ControlNet/control_v11p_sd15_canny.pth; fi; sleep 3600"]
+    volumeMounts:
+      - mountPath: /app/stable-diffusion-webui/models
+        name: stable-diffusion-model-store
+  volumes:
+    - name: stable-diffusion-model-store
+      persistentVolumeClaim:
+        claimName: stable-diffusion-model-store-stable-diffusion-0

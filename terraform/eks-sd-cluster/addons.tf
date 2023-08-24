@@ -167,7 +167,7 @@ data "aws_iam_policy_document" "karpenter-snapshot-policy" {
 }
 
 resource "aws_iam_policy" "karpenter-snapshot-policy" {
-  name        = "karpenter-snapshot-policy"
+  name        = "karpenter-snapshot-policy-${local.region}"
   description = "Allow karpenter controller to run bottlerocket snapshot instance."
   policy      = data.aws_iam_policy_document.karpenter-snapshot-policy.json
 }

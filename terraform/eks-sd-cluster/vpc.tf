@@ -11,6 +11,9 @@ module "vpc" {
   azs             = local.azs
   private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
   public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
+  
+  #add assign public ip for public subnets
+  map_public_ip_on_launch = true
 
   enable_nat_gateway = true
   single_nat_gateway = true
