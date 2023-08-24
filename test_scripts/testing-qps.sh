@@ -17,8 +17,6 @@ do_one_inference()
     echo $idx
     currentTime=$(date "+%H:%M:%S")
     startTs=$(date +%s)
-    # python3 inference_sync.py
-    # python3 inference_sync_on_sd_docker.py
     python $scriptFile
     endTs=$(date +%s)
     endTime=$(date "+%H:%M:%S")
