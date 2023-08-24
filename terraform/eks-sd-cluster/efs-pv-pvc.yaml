@@ -14,7 +14,7 @@ spec:
   csi:
     driver: efs.csi.aws.com
     # eks-tester
-    volumeHandle: fs-045ad1b2755f598ef
+    volumeHandle: fs-02218742f82e0c7a6
     volumeAttributes:
       encryptInTransit: "true"
 

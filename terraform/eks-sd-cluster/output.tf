@@ -18,3 +18,8 @@ output "public_subnet_id_list" {
   description = "public_subnet_id_list"
   value       = module.vpc.public_subnets
 }
+
+output "efs_id" {
+  description = "efs_id"
+  value       = aws_efs_file_system.efs.id
+}

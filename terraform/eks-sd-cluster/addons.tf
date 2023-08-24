@@ -81,77 +81,8 @@ module "eks_blueprints_addons" {
     
   enable_aws_load_balancer_controller    = true
   enable_karpenter = true
-  karpenter = {
-    repository_username = data.aws_ecrpublic_authorization_token.token.user_name
-    repository_password = data.aws_ecrpublic_authorization_token.token.password
-  }
 
   tags = local.tags
-}
-
-################################################################################
-# Karpenter
-################################################################################
-
-resource "kubectl_manifest" "karpenter_provisioner" {
-  yaml_body = <<-YAML
-    apiVersion: karpenter.sh/v1alpha5
-    kind: Provisioner
-    metadata:
-      name: default
-    spec:
-      requirements:
-        - key: "karpenter.k8s.aws/instance-category"
-          operator: In
-          values: ["c", "m"]
-        - key: "karpenter.k8s.aws/instance-cpu"
-          operator: In
-          values: ["2", "4", "8", "16", "32"]
-        - key: "karpenter.k8s.aws/instance-hypervisor"
-          operator: In
-          values: ["nitro"]
-        - key: "topology.kubernetes.io/zone"
-          operator: In
-          values: ${jsonencode(local.azs)}
-        - key: "kubernetes.io/arch"
-          operator: In
-          values: ["amd64"]
-        - key: "karpenter.sh/capacity-type" # If not included, the webhook for the AWS cloud provider will default to on-demand
-          operator: In
-          values: ["spot", "on-demand"]
-      kubeletConfiguration:
-        containerRuntime: containerd
-        maxPods: 110
-      limits:
-        resources:
-          cpu: 1000
-      consolidation:
-        enabled: true
-      providerRef:
-        name: default
-      ttlSecondsUntilExpired: 604800 # 7 Days = 7 * 24 * 60 * 60 Seconds
-  YAML
-
-  depends_on = [
-    module.eks_blueprints_addons
-  ]
-}
-
-resource "kubectl_manifest" "karpenter_node_template" {
-  yaml_body = <<-YAML
-    apiVersion: karpenter.k8s.aws/v1alpha1
-    kind: AWSNodeTemplate
-    metadata:
-      name: default
-    spec:
-      subnetSelector:
-        karpenter.sh/discovery: ${module.eks.cluster_name}
-      securityGroupSelector:
-        karpenter.sh/discovery: ${module.eks.cluster_name}
-      instanceProfile: ${module.eks_blueprints_addons.karpenter.node_instance_profile_name}
-      tags:
-        karpenter.sh/discovery: ${module.eks.cluster_name}
-  YAML
 }
 
 #---------------------------------------------------------------
@@ -177,3 +108,46 @@ resource "aws_iam_role_policy_attachment" "karpenter-bottlerocket-attach" {
   role       = module.eks_blueprints_addons.karpenter.iam_role_name
   policy_arn = aws_iam_policy.karpenter-snapshot-policy.arn
 }
+
+
+#---------------------------------------------------------------
+# EFS module
+# create it in the eks VPC, and open internal access for security group
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/efs_file_system
+#---------------------------------------------------------------
+resource "aws_efs_file_system" "efs" {
+   creation_token = "${local.name}-efs"
+   encrypted = "true"
+ tags = {
+     Name = "EFS"
+     Terraform   = "true"
+   }
+ }
+
+resource "aws_efs_mount_target" "efs-mt" {
+   count = length(module.vpc.private_subnets)
+   file_system_id  = aws_efs_file_system.efs.id
+   subnet_id = module.vpc.private_subnets[count.index]
+   security_groups = [aws_security_group.efs.id]
+ }
+ 
+resource "aws_security_group" "efs" {
+   name = "efs-sg"
+   description= "Allos inbound efs traffic from internal vpc"
+   vpc_id = module.vpc.vpc_id
+
+    ingress {
+      description      = "NFS from VPC"
+      from_port        = 2049
+      to_port          = 2049
+      protocol         = "tcp"
+      cidr_blocks      = [local.vpc_cidr]
+    }
+  
+    egress {
+      from_port        = 0
+      to_port          = 0
+      protocol         = "-1"
+      cidr_blocks      = ["0.0.0.0/0"]
+    }
+ }
