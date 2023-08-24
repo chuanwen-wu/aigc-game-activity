@@ -5,7 +5,7 @@ import io
 import base64
 import requests
 from PIL import Image
-# import logging
+import logging
 import inference
 
 # Cloud Requirements
@@ -93,9 +93,9 @@ def picturesToDiscord(file_path, message_dict, message_response, origin_image_ur
     url = f"https://discord.com/api/v10/webhooks/{message_dict['applicationId']}/{message_dict['interactionToken']}/messages/@original"
     print(url)
     json_payload = {
-        "content": f"*Completed your Sparkle!*```{message_response}```",
+        "content": f"Result:",
         "embeds": [{
-                    "title": "Origin Image:",
+                     "title": f"Origin Input: {message_dict['prompt']}",
                      "image": {"url": origin_image_url}
                 }],
         "attachments": [],
@@ -130,7 +130,8 @@ def submitInitialResponse(application_id, interaction_token, message_response):
     url = f'https://discord.com/api/v10/webhooks/{application_id}/{interaction_token}/messages/@original'
     print(url)
     json_payload = {
-        "content": f"Processing your Sparkle```{message_response}```",
+        # "content": f"Processing your Sparkle```{message_response}```",
+        "content": f"Generating image...",
         "embeds": [],
         "attachments": [],
         "allowed_mentions": { "parse": [] },
@@ -149,14 +150,14 @@ def cleanupPictures(path_to_file):
 def decideInputs(user_dict):
     if 'prompt' not in user_dict:
         user_dict['prompt'] = ""
-    if 'seed' not in user_dict:
-        user_dict['seed'] = random.randint(0,99999)
+    # if 'seed' not in user_dict:
+    #     user_dict['seed'] = random.randint(0,99999)
 
-    if 'steps' not in user_dict:
-        user_dict['steps'] = 16
+    # if 'steps' not in user_dict:
+    #     user_dict['steps'] = 16
 
-    if 'sampler' not in user_dict:
-        user_dict['sampler'] = 'k_euler_a'
+    # if 'sampler' not in user_dict:
+    #     user_dict['sampler'] = 'k_euler_a'
     return user_dict
 
      

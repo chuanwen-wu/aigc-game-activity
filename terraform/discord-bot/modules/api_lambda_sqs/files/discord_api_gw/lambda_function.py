@@ -162,7 +162,8 @@ def lambda_handler(event, context):
             "type": RESPONSE_TYPES['CHANNEL_MESSAGE_WITH_SOURCE'],
             "data": {
                 "tts": False,
-                "content": f"Submitted to Sparkle```{message_response}```",
+                # "content": f"Submitted to Sparkle```{message_response}```",
+                "content": f"Generating image...",
                 "embeds": [{
                     "title": "Origin Image:",
                      "image": {"url": customer_data['image_url']}
