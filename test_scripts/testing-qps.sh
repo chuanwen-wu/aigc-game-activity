@@ -1,23 +1,21 @@
 #!/bin/bash
 
-if [[ $# -eq 0 ]]; then
-    echo "Usage: $0 your_inference_scirpt.py"
+if [[ $# -ne 2 ]]; then
+    echo "Usage: $0 ingress_url request_count"
     exit 1
 fi
-scriptFile=$1
-if [[ ! -f $scriptFile ]]; then
-    echo "$scriptFile not exist, exit"
-    exit 2
-fi
 
-source ../venv/bin/activate
+url=$1
+batchCount=$2
+scriptFile=inference-sample.py
+#source ../venv/bin/activate
 do_one_inference()
 {
     idx=$1
     echo $idx
     currentTime=$(date "+%H:%M:%S")
     startTs=$(date +%s)
-    python $scriptFile
+    python $scriptFile $url
     endTs=$(date +%s)
     endTime=$(date "+%H:%M:%S")
     echo "[$endTime] [$idx] start at $currentTime, time taken: $((endTs-startTs))"
@@ -26,7 +24,7 @@ do_one_inference()
 # 每批任务执行时间间隔，/秒
 timeInterval=0
 # 总共任务批数
-batchCount=30
+# batchCount=30
 # 每批任务的请求数
 batchSize=1
 

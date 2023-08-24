@@ -4,10 +4,17 @@ import base64
 import requests
 import time
 from PIL import Image
+import sys
+import os
 
+if len(sys.argv) < 2:
+    print(f"Usage: python {sys.argv[0]} ingress_url")
+    exit(1)
 
 # A1111 URL
-url = "http://k8s-default-stabledi-419cfcfbe7-378193146.ap-northeast-1.elb.amazonaws.com"
+# url = "http://k8s-default-stabledi-419cfcfbe7-378193146.ap-northeast-1.elb.amazonaws.com"
+url = sys.argv[1]
+# print(f"testing endpoint: {url}")
 
 # Read Image in RGB order
 img = cv2.imread("assets/dog-1.jpeg")
@@ -65,4 +72,5 @@ result = r['images'][0]
 image = Image.open(io.BytesIO(base64.b64decode(result.split(",", 1)[0])))
 f = "./outputs/{}.jpg".format(time.time())
 image.save(f)
+print(f"saved result to {f}")
 # image.show()
