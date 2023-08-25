@@ -125,6 +125,7 @@ resource "aws_efs_file_system" "efs" {
  tags = {
      Name = "EFS"
      Terraform   = "true"
+     auto-delete = "no"
    }
  }
 
