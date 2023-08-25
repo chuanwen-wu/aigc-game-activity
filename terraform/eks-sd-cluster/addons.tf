@@ -81,6 +81,10 @@ module "eks_blueprints_addons" {
     
   enable_aws_load_balancer_controller    = true
   enable_karpenter = true
+  karpenter = {
+        repository_username = data.aws_ecrpublic_authorization_token.token.user_name
+        repository_password = data.aws_ecrpublic_authorization_token.token.password
+  }
 
   tags = local.tags
 }
