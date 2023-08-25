@@ -4,7 +4,7 @@ metadata:
   name: controller-sd
   # namespace: stable-diffusion
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: controller-sd
@@ -25,7 +25,7 @@ spec:
       containers:
         - name: controller-sd
           image: 733851053666.dkr.ecr.ap-northeast-1.amazonaws.com/controller-sd:0.1
-          # image: 733851053666.dkr.ecr.ap-northeast-1.amazonaws.com/aigc-service-image:latest
+          #imagePullPolicy: Always
           resources:
             requests:
               cpu: 1

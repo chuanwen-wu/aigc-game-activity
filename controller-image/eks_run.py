@@ -13,13 +13,14 @@ import boto3
 import json
 import requests
 import random
-print("Start...")
+import threading
+
 REGION = os.environ['REGION']
 QUEUE_URL = os.environ['SQSQUEUEURL']
 endpoint = os.environ['ENDPOINT']
-print("REGION{}".format(REGION))
-print("QUEUE_URL{}".format(QUEUE_URL))
-print("endpoint{}".format(endpoint))
+print("REGION={}".format(REGION))
+print("QUEUE_URL={}".format(QUEUE_URL))
+print("endpoint={}".format(endpoint))
 
 ssm = boto3.client('ssm', region_name=REGION)
 #USER_HG =  ssm.get_parameter(Name='/USER_HG')['Parameter']['Value']
@@ -50,6 +51,8 @@ def getSQSMessage(queue_url, time_wait):
     except KeyError:
         return None, None
 
+    print("get msg from sqs:");
+    print(response)
     receipt_handle = message['ReceiptHandle']
     return message, receipt_handle
 
@@ -162,6 +165,8 @@ def decideInputs(user_dict):
 
      
 def runMain():
+    print('thread %s is running....' % threading.current_thread().name);
+
     queue_long_poll = WAIT_TIME_SECONDS
     # Get Message from Queue
     while True:
@@ -174,28 +179,32 @@ def runMain():
                 message, receipt_handle = getSQSMessage(QUEUE_URL, queue_long_poll)
                 if message:
                     break
-
-        ## Run stable Diffusion
-        print("Found a message! Running Stable Diffusion")
-        message_dict = convertMessageToDict(message)
-        message_dict = decideInputs(message_dict)
-        message_response = messageResponse(message_dict)
-        print(message_response)
-        submitInitialResponse(message_dict['applicationId'], message_dict['interactionToken'], message_response)
-        # file_path, user_seed, user_steps = runStableDiffusion(opt, message_dict, model, device, outpath, sampler)
         
-        input_prompt=message_dict['prompt']
-        origin_image_url=message_dict['image_url']
-        response_buffer = inference.img2img(origin_image_url, input_prompt, endpoint)
-        if response_buffer == None:
-            print("failed")
-        else:
-            image = Image.open(response_buffer)
-            file_path="output.png"
-            image.save(file_path)
-        #file_path = saveImage(image_list)
-        picturesToDiscord(file_path, message_dict, message_response,origin_image_url)
-        cleanupPictures(file_path)
+        try:
+            ## Run stable Diffusion
+            print("Found a message! Running Stable Diffusion")
+            message_dict = convertMessageToDict(message)
+            message_dict = decideInputs(message_dict)
+            message_response = messageResponse(message_dict)
+            print(message_response)
+            submitInitialResponse(message_dict['applicationId'], message_dict['interactionToken'], message_response)
+            # file_path, user_seed, user_steps = runStableDiffusion(opt, message_dict, model, device, outpath, sampler)
+            
+            input_prompt=message_dict['prompt']
+            origin_image_url=message_dict['image_url']
+            response_buffer = inference.img2img(origin_image_url, input_prompt, endpoint)
+            if response_buffer == None:
+                print("failed")
+            else:
+                image = Image.open(response_buffer)
+                file_path="output.png"
+                image.save(file_path)
+            #file_path = saveImage(image_list)
+            picturesToDiscord(file_path, message_dict, message_response,origin_image_url)
+            cleanupPictures(file_path)
+        except Exception as e:
+            print('Error:', e)
+            continue
         
         ## Delete Message 
         deleteSQSMessage(QUEUE_URL, receipt_handle, message_dict['prompt'])
