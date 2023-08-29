@@ -1,12 +1,13 @@
 #!/bin/bash
 
-if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 ingress_url request_count"
+if [[ $# -ne 3 ]]; then
+    echo "Usage: $0 ingress_url request_count timeInterval"
     exit 1
 fi
 
 url=$1
 batchCount=$2
+timeInterval=$3
 scriptFile=inference-sample.py
 #source ../venv/bin/activate
 do_one_inference()
@@ -22,7 +23,7 @@ do_one_inference()
 }
 
 # 每批任务执行时间间隔，/秒
-timeInterval=0
+# timeInterval=0
 # 总共任务批数
 # batchCount=30
 # 每批任务的请求数
