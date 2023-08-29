@@ -17,7 +17,7 @@ url = sys.argv[1]
 # print(f"testing endpoint: {url}")
 
 # Read Image in RGB order
-img = cv2.imread("assets/dog-1.jpeg")
+img = cv2.imread("assets/cat-1.jpeg")
 
 # Encode into PNG and send to ControlNet
 retval, bytes = cv2.imencode('.png', img)
