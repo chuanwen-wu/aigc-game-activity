@@ -3,7 +3,7 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: stable-diffusion-hpa
 spec:
-  maxReplicas: 2 # Update this according to your desired number of replicas
+  maxReplicas: 10 # Update this according to your desired number of replicas
   minReplicas: 1
   scaleTargetRef:
     apiVersion: apps/v1beta1
@@ -16,11 +16,17 @@ spec:
         name: DCGM_FI_DEV_GPU_UTIL
       target:
         type: AverageValue
-        averageValue: 90
+        averageValue: 70
   behavior:
     scaleDown:
-      stabilizationWindowSeconds: 300
+      stabilizationWindowSeconds: 40
       policies:
       - type: Pods
         value: 1 # Scale down to 1 pod
-        periodSeconds: 60
+        periodSeconds: 30
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Pods
+        value: 1
+        periodSeconds: 15
