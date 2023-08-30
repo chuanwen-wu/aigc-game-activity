@@ -34,6 +34,7 @@ def download_image(url: str):
 
 
 def img2img( input_url: str, input_prompt: str =None, endpoint: str =endpoint, width: int =512, height: int=512):
+    print("[img2img] input_url={}, input_prompt={}, endpoint={}, width={}, height={}".format(input_url, input_prompt, endpoint, width, height))
     ret, img_bytes = download_image(input_url)
     if ret != 200: #fail
         return None
