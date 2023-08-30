@@ -192,7 +192,16 @@ def runMain():
             
             input_prompt=message_dict['prompt']
             origin_image_url=message_dict['image_url']
-            response_buffer = inference.img2img(origin_image_url, input_prompt, endpoint)
+            input_width = message_dict['image_width']
+            input_height = message_dict['image_height']
+            width = height = min_pixel = 512
+            if input_width > input_height:
+                height = min_pixel
+                width = int(input_width/input_height*height)
+            else:
+                width = min_pixel
+                height = int(input_height/input_width*width)
+            response_buffer = inference.img2img(origin_image_url, input_prompt, endpoint, width=width, height=height)
             if response_buffer == None:
                 print("failed")
             else:

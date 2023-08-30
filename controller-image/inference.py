@@ -33,7 +33,7 @@ def download_image(url: str):
     return ret, buffer
 
 
-def img2img( input_url: str, input_prompt: str =None, endpoint: str =endpoint):
+def img2img( input_url: str, input_prompt: str =None, endpoint: str =endpoint, width: int =512, height: int=512):
     ret, img_bytes = download_image(input_url)
     if ret != 200: #fail
         return None
@@ -60,8 +60,8 @@ def img2img( input_url: str, input_prompt: str =None, endpoint: str =endpoint):
         "batch_size": 1,
         "steps": 20,
         "cfg_scale": 7,
-        "width": 512,   
-        "height": 512,
+        "width": width,   
+        "height": height,
         "restore_faces": False,
         "sampler_index": "Euler a",
         "script_name": "",
