@@ -92,6 +92,8 @@ def getCustomerData(discord_raw):
     customer_input=customer_data["image"]
     #print(discord_raw['data']['resolved']['attachments'][customer_input]['url'])
     customer_data["image_url"] = discord_raw['data']['resolved']['attachments'][customer_input]['url']
+    customer_data["image_height"] = discord_raw['data']['resolved']['attachments'][customer_input]['height']
+    customer_data["image_width"] = discord_raw['data']['resolved']['attachments'][customer_input]['width']
     return customer_data
 
 
