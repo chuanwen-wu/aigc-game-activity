@@ -153,6 +153,16 @@ def cleanupPictures(path_to_file):
 def decideInputs(user_dict):
     if 'prompt' not in user_dict:
         user_dict['prompt'] = ""
+
+    if 'image_width' not in user_dict:
+        user_dict['image_width'] = 512
+    else:
+        user_dict['image_width'] = int(user_dict['image_width'])
+
+    if 'image_height' not in user_dict:
+        user_dict['image_height'] = 512
+    else:
+        user_dict['image_height'] = int(user_dict['image_height'])
     # if 'seed' not in user_dict:
     #     user_dict['seed'] = random.randint(0,99999)
 
@@ -163,6 +173,17 @@ def decideInputs(user_dict):
     #     user_dict['sampler'] = 'k_euler_a'
     return user_dict
 
+
+def get_output_image_size(min_pixel: int, input_width: int, input_height: int):
+    # width = height = min_pixel = 512
+    if input_width > input_height:
+        height = min_pixel
+        width = int(input_width/input_height*height)
+    else:
+        width = min_pixel
+        height = int(input_height/input_width*width)
+    
+    return width, height
      
 def runMain():
     print('thread %s is running....' % threading.current_thread().name);
@@ -184,23 +205,17 @@ def runMain():
             ## Run stable Diffusion
             print("Found a message! Running Stable Diffusion")
             message_dict = convertMessageToDict(message)
+            print(message_dict)
             message_dict = decideInputs(message_dict)
-            message_response = messageResponse(message_dict)
-            print(message_response)
+            message_response = {}
+            # message_response = messageResponse(message_dict)
+            # print(message_response)
             submitInitialResponse(message_dict['applicationId'], message_dict['interactionToken'], message_response)
             # file_path, user_seed, user_steps = runStableDiffusion(opt, message_dict, model, device, outpath, sampler)
             
             input_prompt=message_dict['prompt']
             origin_image_url=message_dict['image_url']
-            input_width = message_dict['image_width']
-            input_height = message_dict['image_height']
-            width = height = min_pixel = 512
-            if input_width > input_height:
-                height = min_pixel
-                width = int(input_width/input_height*height)
-            else:
-                width = min_pixel
-                height = int(input_height/input_width*width)
+            width, height = get_output_image_size(512, message_dict['image_width'], message_dict['image_height'])
             response_buffer = inference.img2img(origin_image_url, input_prompt, endpoint, width=width, height=height)
             if response_buffer == None:
                 print("failed")
