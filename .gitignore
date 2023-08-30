@@ -1,3 +1,4 @@
+*.tfvars
 sync_to_server.sh
 tmp
 .DS_Store
