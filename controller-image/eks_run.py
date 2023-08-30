@@ -134,7 +134,7 @@ def submitInitialResponse(application_id, interaction_token, message_response):
     print(url)
     json_payload = {
         # "content": f"Processing your Sparkle```{message_response}```",
-        "content": f"Generating image...",
+        "content": f"Generating image......",
         "embeds": [],
         "attachments": [],
         "allowed_mentions": { "parse": [] },

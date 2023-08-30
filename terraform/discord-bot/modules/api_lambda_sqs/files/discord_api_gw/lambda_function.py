@@ -157,7 +157,7 @@ def lambda_handler(event, context):
     user_id = info['member']['user']['id']
     username = info['member']['user']['username']
     sendSQSMessage(customer_data, it_id,it_token, user_id, username, APPLICATION_ID)
-    message_response = messageResponse(customer_data)
+    # message_response = messageResponse(customer_data)
     # Respond to user
     print("Going to return some data!")
     return {
@@ -166,10 +166,10 @@ def lambda_handler(event, context):
                 "tts": False,
                 # "content": f"Submitted to Sparkle```{message_response}```",
                 "content": f"Generating image...",
-                "embeds": [{
-                    "title": "Origin Image:",
-                     "image": {"url": customer_data['image_url']}
-                }],
-                "allowed_mentions": { "parse": [] }
+                # "embeds": [{
+                #     "title": "Origin Image:",
+                #      "image": {"url": customer_data['image_url']}
+                # }],
+                # "allowed_mentions": { "parse": [] }
             }
         }
