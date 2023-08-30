@@ -63,7 +63,7 @@ def img2img( input_url: str, input_prompt: str =None, endpoint: str =endpoint, w
         "cfg_scale": 7,
         "width": width,   
         "height": height,
-        "restore_faces": False,
+        "restore_faces": True,
         "sampler_index": "Euler a",
         "script_name": "",
         "send_images": True,
