@@ -1,0 +1,4 @@
+signing
+requests
+boto3
+exception
