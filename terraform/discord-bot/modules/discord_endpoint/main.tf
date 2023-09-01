@@ -147,9 +147,22 @@ resource "aws_iam_role_policy_attachment" "discord_api_to_lambda_sqs" {
 }
 
 resource "aws_lambda_layer_version" "discord_bot_layer" {
-  filename                 = "${path.module}/layer/discord_bot_layer_x86_64.zip"
+  # filename                 = "${path.module}/layer/discord_bot_layer_x86_64.zip"
+  filename                 = "${path.module}/layer/${data.external.build_layer.result.layerName}.zip"
   # layer_name               = "${var.project_id}-pynacl"
   layer_name               = "${var.project_id}-discord_bot_layer"
   compatible_runtimes      = ["python3.10"]
   compatible_architectures = ["x86_64"]
+  depends_on               = [data.external.build_layer]
 }
+
+data "external" "build_layer" {
+  program = ["bash","${path.module}/layer/build.sh"]
+  # query = {
+  #   p_env = "dev"
+  # }
+}
+
+# output "discord_bot_layer_name" {
+#   value = data.external.build_layer.result.layerName
+# }

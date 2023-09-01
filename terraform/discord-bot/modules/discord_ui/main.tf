@@ -132,9 +132,17 @@ data "aws_lambda_invocation" "Update_discord_Commands" {
 }
 
 resource "aws_lambda_layer_version" "discord_ui_layer" {
-  filename                 = "${path.module}/layer/discord_ui_layer_x86_64.zip"
+  filename                 = "${path.module}/layer/${data.external.build_ui_layer.result.layerName}.zip"
   # layer_name               = "${var.project_id}-pynacl"
   layer_name               = "${var.project_id}-discord_ui_layer"
   compatible_runtimes      = ["python3.10"]
   compatible_architectures = ["x86_64"]
+  depends_on               = [data.external.build_ui_layer]
+}
+
+data "external" "build_ui_layer" {
+  program = ["bash","${path.module}/layer/build.sh"]
+  # query = {
+  #   p_env = "dev"
+  # }
 }
