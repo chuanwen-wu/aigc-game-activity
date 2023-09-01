@@ -8,7 +8,7 @@ resource "aws_lambda_function" "discord_ui" {
   description      = "Discord UI"
   filename         = "${path.module}/discord_ui_src.zip"
   source_code_hash = data.archive_file.discord_ui.output_base64sha256
-  runtime          = "python3.10"
+  runtime          = "python${data.external.python_runtime_version.result.version}"
   architectures    = ["x86_64"]
   role             = aws_iam_role.discord_ui.arn
   handler          = "lambda_function.lambda_handler"
@@ -24,6 +24,7 @@ resource "aws_lambda_function" "discord_ui" {
     aws_iam_role_policy_attachment.discord_ui_ssm,
     aws_iam_role_policy_attachment.discord_ui_logging,
     aws_cloudwatch_log_group.discord_ui,
+    data.external.python_runtime_version
   ]
 }
 
@@ -135,9 +136,12 @@ resource "aws_lambda_layer_version" "discord_ui_layer" {
   filename                 = "${path.module}/layer/${data.external.build_ui_layer.result.layerName}.zip"
   # layer_name               = "${var.project_id}-pynacl"
   layer_name               = "${var.project_id}-discord_ui_layer"
-  compatible_runtimes      = ["python3.10"]
+  compatible_runtimes      = ["python${data.external.python_runtime_version.result.version}"]
   compatible_architectures = ["x86_64"]
-  depends_on               = [data.external.build_ui_layer]
+  depends_on               = [
+    data.external.build_ui_layer, 
+    data.external.python_runtime_version
+  ]
 }
 
 data "external" "build_ui_layer" {
@@ -145,4 +149,8 @@ data "external" "build_ui_layer" {
   # query = {
   #   p_env = "dev"
   # }
+}
+
+data "external" "python_runtime_version" {
+    program = ["bash","${path.module}/layer/get_python_version.sh"]
 }

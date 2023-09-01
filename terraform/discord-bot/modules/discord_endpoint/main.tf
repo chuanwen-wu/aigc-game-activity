@@ -48,7 +48,8 @@ resource "aws_lambda_function" "discord_api_to_lambda" {
   description      = "Discord api endpoint"
   filename         = "${path.module}/discord_endpoint_src.zip"
   source_code_hash = data.archive_file.discord_api_to_lambda.output_base64sha256
-  runtime          = "python3.10"
+  # runtime          = "python${var.python_runtime_version}"
+  runtime          = "python${data.external.python_runtime_version.result.version}"
   architectures    = ["x86_64"]
   role             = aws_iam_role.discord_api_to_lambda.arn
   handler          = "lambda_function.lambda_handler"
@@ -68,7 +69,8 @@ resource "aws_lambda_function" "discord_api_to_lambda" {
     aws_iam_role_policy_attachment.discord_api_to_lambda,
     aws_iam_role_policy_attachment.discord_api_to_lambda_sqs,
     aws_cloudwatch_log_group.discord_api_to_lambda,
-    data.archive_file.discord_api_to_lambda
+    data.archive_file.discord_api_to_lambda,
+    data.external.python_runtime_version
   ]
 }
 
@@ -151,9 +153,12 @@ resource "aws_lambda_layer_version" "discord_bot_layer" {
   filename                 = "${path.module}/layer/${data.external.build_layer.result.layerName}.zip"
   # layer_name               = "${var.project_id}-pynacl"
   layer_name               = "${var.project_id}-discord_bot_layer"
-  compatible_runtimes      = ["python3.10"]
+  compatible_runtimes      = ["python${data.external.python_runtime_version.result.version}"]
   compatible_architectures = ["x86_64"]
-  depends_on               = [data.external.build_layer]
+  depends_on               = [
+    data.external.build_layer, 
+    data.external.python_runtime_version
+  ]
 }
 
 data "external" "build_layer" {
@@ -163,6 +168,20 @@ data "external" "build_layer" {
   # }
 }
 
+
+data "external" "python_runtime_version" {
+  # program = [
+  #   "echo", <<-EOT
+  #     {"version":"$(python3 --version | awk '{print $2}' | awk -F '.' '{printf(\"%s.%s\", $1, $2)}')"}
+  #   EOT
+  # ]
+  # program = [
+  #   "echo", 
+  #     "{\"version\":\"$(git rev-parse --short HEAD)\"}"
+  # ]
+    program = ["bash","${path.module}/layer/get_python_version.sh"]
+
+}
 # output "discord_bot_layer_name" {
 #   value = data.external.build_layer.result.layerName
 # }

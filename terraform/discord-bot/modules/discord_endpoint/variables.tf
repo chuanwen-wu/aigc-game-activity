@@ -23,6 +23,11 @@ variable "discord_public_key" {
   type        = string
 }
 
+# variable "python_runtime_version" {
+#   description = "python3 runtime version"
+#   type        = string
+# }
+
 # variable "pynacl_arn" {
 #   description = "Lambda Layer pynacl's arn"
 #   type        = string
