@@ -18,7 +18,7 @@ pip3 install --target ${tardir} -qU -r requirements.txt
 
 zip -q -r ./${layerName}.zip $tardir
 
-rm -rf $tardir
+# rm -rf $tardir
 
 jq -n --arg layerName "$layerName" \
       '{"layerName":$layerName}'
