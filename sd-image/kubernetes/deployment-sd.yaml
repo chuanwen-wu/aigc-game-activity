@@ -5,7 +5,7 @@ metadata:
   # namespace: stable-diffusion
 
 spec:
-  replicas: 2
+  replicas: 3
   selector:
      matchLabels:
       app.kubernetes.io/instance: stable-diffusion

@@ -4,7 +4,7 @@ from nacl.signing import VerifyKey
 from nacl.exceptions import BadSignatureError
 import os
 import boto3
-import requests
+# import requests
 import random
 
 lambda_client = boto3.client('lambda')

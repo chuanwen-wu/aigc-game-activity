@@ -45,16 +45,16 @@ resource "aws_lambda_permission" "apigw" {
 ### Discord API First Response ###
 resource "aws_lambda_function" "discord_api_to_lambda" {
   function_name    = local.discord_api_to_lambda
-  description      = "Discord First Response"
-  filename         = "${path.module}/files/discord_api_gw.zip"
+  description      = "Discord api endpoint"
+  filename         = "${path.module}/discord_endpoint_src.zip"
   source_code_hash = data.archive_file.discord_api_to_lambda.output_base64sha256
-  runtime          = "python3.8"
-  architectures    = ["arm64"]
+  runtime          = "python3.10"
+  architectures    = ["x86_64"]
   role             = aws_iam_role.discord_api_to_lambda.arn
   handler          = "lambda_function.lambda_handler"
   layers = [
-    var.requests_arn,
-    var.pynacl_arn
+    # var.requests_arn,
+    aws_lambda_layer_version.discord_bot_layer.arn
   ]
   environment {
     variables = {
@@ -74,8 +74,8 @@ resource "aws_lambda_function" "discord_api_to_lambda" {
 
 data "archive_file" "discord_api_to_lambda" {
   type        = "zip"
-  source_dir  = "${path.module}/files/discord_api_gw"
-  output_path = "${path.module}/files/discord_api_gw.zip"
+  source_dir  = "${path.module}/src"
+  output_path = "${path.module}/discord_endpoint_src.zip"
 }
 
 resource "aws_cloudwatch_log_group" "discord_api_to_lambda" {
@@ -144,4 +144,12 @@ resource "aws_iam_role_policy_attachment" "discord_api_to_lambda" {
 resource "aws_iam_role_policy_attachment" "discord_api_to_lambda_sqs" {
   role       = aws_iam_role.discord_api_to_lambda.name
   policy_arn = aws_iam_policy.lambda_send_sqs_message.arn
+}
+
+resource "aws_lambda_layer_version" "discord_bot_layer" {
+  filename                 = "${path.module}/layer/discord_bot_layer_x86_64.zip"
+  # layer_name               = "${var.project_id}-pynacl"
+  layer_name               = "${var.project_id}-discord_bot_layer"
+  compatible_runtimes      = ["python3.10"]
+  compatible_architectures = ["x86_64"]
 }

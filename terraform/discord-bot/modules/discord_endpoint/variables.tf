@@ -23,12 +23,12 @@ variable "discord_public_key" {
   type        = string
 }
 
-variable "pynacl_arn" {
-  description = "Lambda Layer pynacl's arn"
-  type        = string
-}
+# variable "pynacl_arn" {
+#   description = "Lambda Layer pynacl's arn"
+#   type        = string
+# }
 
-variable "requests_arn" {
-  description = "Lambda Layer request's arn"
-  type        = string
-}
+# variable "requests_arn" {
+#   description = "Lambda Layer request's arn"
+#   type        = string
+# }

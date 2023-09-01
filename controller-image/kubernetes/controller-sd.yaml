@@ -25,7 +25,7 @@ spec:
       containers:
         - name: controller-sd
           image: 733851053666.dkr.ecr.ap-northeast-1.amazonaws.com/controller-sd:0.1
-          #imagePullPolicy: Always
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: 1

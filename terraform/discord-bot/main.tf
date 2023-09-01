@@ -5,14 +5,14 @@ locals {
 
 # API Gateway, Discord Lambda handler, and SQS
 module "api_gw_lambda" {
-  source                 = "./modules/api_lambda_sqs"
+  source                 = "./modules/discord_endpoint"
   account_id             = data.aws_caller_identity.current.account_id
   project_id             = local.unique_project
   region                 = var.region
   discord_application_id = var.discord_application_id
   discord_public_key     = var.discord_public_key
-  pynacl_arn             = aws_lambda_layer_version.pynacl.arn
-  requests_arn           = aws_lambda_layer_version.requests.arn
+  # pynacl_arn             = aws_lambda_layer_version.pynacl.arn
+  # requests_arn           = aws_lambda_layer_version.requests.arn
 }
 
 # A Lambda function that creates the Discord UI
@@ -22,25 +22,25 @@ module "discord_ui" {
   project_id             = local.unique_project
   region                 = var.region
   discord_application_id = var.discord_application_id
-  requests_arn           = aws_lambda_layer_version.requests.arn
+  # requests_arn           = aws_lambda_layer_version.requests.arn
   discord_bot_secret     = var.discord_bot_secret
 }
 
 
 # Lambda layers to be used for all Lambda functions
-resource "aws_lambda_layer_version" "requests" {
-  filename                 = "files/requests_layer_arm64.zip"
-  layer_name               = "${local.unique_project}-requests"
-  compatible_runtimes      = ["python3.8"]
-  compatible_architectures = ["arm64"]
-}
+# resource "aws_lambda_layer_version" "requests" {
+#   filename                 = "files/requests_layer_arm64.zip"
+#   layer_name               = "${local.unique_project}-requests"
+#   compatible_runtimes      = ["python3.8"]
+#   compatible_architectures = ["arm64"]
+# }
 
-resource "aws_lambda_layer_version" "pynacl" {
-  filename                 = "files/pynacl_layer_arm64.zip"
-  layer_name               = "${local.unique_project}-pynacl"
-  compatible_runtimes      = ["python3.8"]
-  compatible_architectures = ["arm64"]
-}
+# resource "aws_lambda_layer_version" "pynacl" {
+#   filename                 = "files/pynacl_layer_arm64.zip"
+#   layer_name               = "${local.unique_project}-pynacl"
+#   compatible_runtimes      = ["python3.8"]
+#   compatible_architectures = ["arm64"]
+# }
 
 
 resource "aws_iam_policy" "AWSContainerSQSQueueExecutionPolicy" {

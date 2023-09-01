@@ -23,7 +23,7 @@ variable "discord_bot_secret" {
   type        = string
 }
 
-variable "requests_arn" {
-  description = "Lambda Layer request's arn"
-  type        = string
-}
+# variable "requests_arn" {
+#   description = "Lambda Layer request's arn"
+#   type        = string
+# }
