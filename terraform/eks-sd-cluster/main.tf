@@ -1,6 +1,6 @@
 locals {
     # name   = basename(path.cwd) 
-    name = "eks-game-gai"
+    name = "eks-game-gai-2"
     cluster_name = local.name
     cluster_version = 1.25
     region = "ap-northeast-1"
