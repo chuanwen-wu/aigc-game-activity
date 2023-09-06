@@ -1,7 +1,5 @@
 #Build the sd controller image
 AWS_REGION='ap-northeast-1'
-cluster_name='eks-game-gai'
-
 image_name=controller-sd
 
 version=0.1
