@@ -15,4 +15,5 @@ provider "aws" {
       Project     = local.unique_project
     }
   }
+  region = "${var.region}"
 }
